@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@include file="/common/taglib.jsp"%>	
+<%@include file="/common/taglib.jsp"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,12 +13,12 @@
 		<div class="login-form">
 			<div class="main-div">
 				<c:if test="${param.incorrectAccount != null}">
-					<div class="alert alert-danger">	
+					<div class="alert alert-danger">
 							Username or password incorrect
 					</div>
 				</c:if>
 				<c:if test="${param.accessDenied != null}">
-					<div class="alert alert-danger">	
+					<div class="alert alert-danger">
 							You Not authorize
 					</div>
 				</c:if>
@@ -69,7 +69,9 @@
 											<div class="text-center">
 												<p class="mb-0 tex-center account">Don't have an account? <a href="#!" class="text-white-50 fw-bold">Sign Up</a></p>
 											</div>
-
+											<div class="text-center">
+												<a href="web/home.jsp" class="text-white-50 fw-bold">Quay lại trang chủ</a>
+											</div>
 										</div>
 									</div>
 								</div>

@@ -16,17 +16,24 @@ public class CustomerSearchResultConverter {
     private ModelMapper modelMapper;
 
     public CustomerSearchResponse converterToCustomerSearchResponse(CustomerEntity customerEntity) {
+        if (customerEntity == null) {
+            return null;
+        }
         CustomerSearchResponse customerSearchResponse = modelMapper.map(customerEntity, CustomerSearchResponse.class);
         String st = customerEntity.getStatus();
+
         Map<String, String> map = StatusCode.getStatusCode();
         String res = "";
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            if(st.equals(entry.getKey())){
+
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (st != null && st.equals(entry.getKey())) {
                 res = entry.getValue();
                 break;
             }
         }
+
         customerSearchResponse.setStatus(res);
         return customerSearchResponse;
     }
+
 }

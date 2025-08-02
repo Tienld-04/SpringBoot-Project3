@@ -2,6 +2,7 @@ package com.javaweb.controller.web;
 
 import com.javaweb.enums.City;
 import com.javaweb.enums.TypeCode;
+import com.javaweb.model.dto.CustomerDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.enums.DistrictCode;
 import org.springframework.security.core.Authentication;
@@ -51,12 +52,14 @@ public class HomeController {
     @GetMapping(value = "/lien-he")
     public ModelAndView contact() {
         ModelAndView mav = new ModelAndView("/web/contact");
+        mav.addObject("modalCustomerContract", new CustomerDTO());
         return mav;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login() {
         ModelAndView mav = new ModelAndView("login");
+
         return mav;
     }
 
