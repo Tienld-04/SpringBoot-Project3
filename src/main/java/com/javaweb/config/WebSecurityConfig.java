@@ -25,13 +25,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
 
-        return new BCryptPasswordEncoder(); // M
+        return new BCryptPasswordEncoder(); // Mã hóa mk
     }
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(userDetailsService());   // tự động gọi loadUserByUsername để xác thực người dùng
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

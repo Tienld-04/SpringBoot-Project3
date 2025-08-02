@@ -15,6 +15,10 @@ public enum TypeCode {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public static Map<String, String> type() {
         Map<String, String> typeCode = new TreeMap<>();
         for (TypeCode type : TypeCode.values()) {
