@@ -80,12 +80,13 @@
                                     <div class="form-group">
                                         <div class="col-xs-12">
                                             <div class="col-sm-4">
-                                                    <%--                                                <security:authorize access="hasRole('MANAGER')">--%>
-                                                <label for="" class="name"> Chọn nhân viên</label>
-                                                <form:select path="staffId" cssClass="form-control">
-                                                    <form:option value="" label="-- Chọn nhân viên --"/>
-                                                    <form:options items="${staffs}"/>
-                                                </form:select>
+                                                <security:authorize access="hasRole('MANAGER')">
+                                                    <label for="" class="name"> Chọn nhân viên</label>
+                                                    <form:select path="staffId" cssClass="form-control">
+                                                        <form:option value="" label="-- Chọn nhân viên --"/>
+                                                        <form:options items="${staffs}"/>
+                                                    </form:select>
+                                                </security:authorize>
                                             </div>
                                         </div>
                                     </div>
@@ -173,12 +174,12 @@
                                 <td>${item.modifiedBy}</td>
                                 <td>
                                     <div class="hidden-sm hidden-xs btn-group">
-
-                                        <button class="btn btn-xs btn-success" title="Giao khách hàng"
-                                                onclick="assingmentCustomer(${item.id})">
-                                            <i class="ace-icon glyphicon glyphicon-list"></i>
-                                        </button>
-
+                                        <security:authorize access="hasRole('MANAGER')">
+                                            <button class="btn btn-xs btn-success" title="Giao khách hàng"
+                                                    onclick="assingmentCustomer(${item.id})">
+                                                <i class="ace-icon glyphicon glyphicon-list"></i>
+                                            </button>
+                                        </security:authorize>
                                         <a class="btn btn-xs btn-info" title="Sửa khách hàng"
                                            href="/admin/customer-edit-${item.id}">
                                             <i class="ace-icon fa fa-pencil bigger-120"></i>

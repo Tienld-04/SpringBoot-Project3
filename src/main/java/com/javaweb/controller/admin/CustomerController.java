@@ -34,11 +34,17 @@ public class CustomerController {
     public ModelAndView customerList(@ModelAttribute("customerSearch") CustomerSearchRequest customerSearchRequest, HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("admin/customer/list");
         modelAndView.addObject("modelSearch", customerSearchRequest);
-        // lấy dữ liệu từ db
-        List<CustomerSearchResponse> responseList = iCustomerService.searchCustomers(customerSearchRequest);
-        modelAndView.addObject("customers", responseList);
-       // modelAndView.addObject("statusCode", StatusCode.getStatusCode());
         modelAndView.addObject("staffs", iUserService.getStaffs());
+       // modelAndView.addObject("statusCode", StatusCode.getStatusCode());
+        if(SecurityUtils.getAuthorities().contains("ROLE_STAFF")) {
+            Long staffId = SecurityUtils.getPrincipal().getId();
+            customerSearchRequest.setStaffId(staffId);
+            List<CustomerSearchResponse> responseList = iCustomerService.searchCustomers(customerSearchRequest);
+            modelAndView.addObject("customers", responseList);
+        }else {
+            List<CustomerSearchResponse> responseList = iCustomerService.searchCustomers(customerSearchRequest);
+            modelAndView.addObject("customers", responseList);
+        }
         return modelAndView;
     }
 

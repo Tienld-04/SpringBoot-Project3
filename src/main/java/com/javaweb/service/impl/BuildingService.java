@@ -38,18 +38,18 @@ public class BuildingService implements IBuildingService {
     @Autowired
     private BuildingConverter buildingConverter;
     @Autowired
-    private BuildingSearchResultConverter  buildingSearchResultConverter;
+    private BuildingSearchResultConverter buildingSearchResultConverter;
     @Autowired
     private BuildingRepositoryCustom buildingRepositoryCustom;
     @Autowired
     private RentAreaRepository rentAreaRepository;
 
     @Override
-    public List<BuildingSearchResponse> getBuildingSearch(BuildingSearchRequest buildingSearchRequest){
+    public List<BuildingSearchResponse> getBuildingSearch(BuildingSearchRequest buildingSearchRequest) {
         BuildingSearchBuilder buildingSearchBuilder = buildingSearchConverter.converterToBuildingSearchBuilder(buildingSearchRequest);
         List<BuildingEntity> result = buildingRepositoryCustom.getBuildings(buildingSearchBuilder);
         List<BuildingSearchResponse> buildingSearchResponseList = new ArrayList<>();
-        for(BuildingEntity buildingEntity : result){
+        for (BuildingEntity buildingEntity : result) {
             BuildingSearchResponse buildingSearchResponse = buildingSearchResultConverter.converterToBuildingSearchResponse(buildingEntity);
             buildingSearchResponseList.add(buildingSearchResponse);
         }
@@ -60,7 +60,7 @@ public class BuildingService implements IBuildingService {
     public BuildingDTO findBuildingById(Long id) {
         Optional<BuildingEntity> op = buildingRepository.findById(id);
         BuildingEntity buildingEntity = new BuildingEntity();
-        if(op.isPresent()){
+        if (op.isPresent()) {
             buildingEntity = op.get();
         }
         return buildingConverter.converterToBuildingDTO(buildingEntity);
@@ -68,7 +68,7 @@ public class BuildingService implements IBuildingService {
 
     @Override
     @Transactional
-    public void addOrUpdateBuilding(BuildingDTO buildingDTO){
+    public void addOrUpdateBuilding(BuildingDTO buildingDTO) {
         Long buildingId = buildingDTO.getId();
         if(buildingId == null){
             BuildingEntity buildingEntity = buildingConverter.converterToBuildingEntity(buildingDTO);
@@ -76,15 +76,14 @@ public class BuildingService implements IBuildingService {
         }else {
             BuildingEntity updateBuildingEntity = buildingRepository.findById(buildingId).orElseThrow(() -> new NotFoundException("Building not found with ID: " + buildingId));
             updateBuildingEntity = buildingConverter.converterToBuildingEntity(buildingDTO);
-
             buildingRepository.save(updateBuildingEntity);
         }
 
 //        Long buildingId = buildingDTO.getId();
 //        BuildingEntity buildingEntity = buildingConverter.converterToBuildingEntity(buildingDTO);
-//        List<RentAreaEntity> rentAreaEntity = buildingEntity.getRentAreaEntities();
-//        if(buildingId!=null){
-//            BuildingEntity updatedBuilding = buildingRepository.findById(buildingId).orElseThrow(()->new NotFoundException("Building Not Found"));
+//        //List<RentAreaEntity> rentAreaEntity = buildingEntity.getRentAreaEntities();
+//        if (buildingId != null) {
+//            BuildingEntity updatedBuilding = buildingRepository.findById(buildingId).orElseThrow(() -> new NotFoundException("Building Not Found"));
 //        }
 //        buildingRepository.save(buildingEntity);
     }
@@ -92,25 +91,25 @@ public class BuildingService implements IBuildingService {
     @Override
     @Transactional
     public void deleteBuildingByIds(List<Long> ids) {
-       List<BuildingEntity> buildings = buildingRepository.findAllById(ids);
+        List<BuildingEntity> buildings = buildingRepository.findAllById(ids);
 
-       for (BuildingEntity buildingEntity : buildings) {
-           List<RentAreaEntity> rentAreaEntities = buildingEntity.getRentAreaEntities();
-           List<UserEntity> userEntities = buildingEntity.getUserEntities();
-           if(!userEntities.isEmpty()){
-               buildingEntity.getUserEntities().clear();
-               buildingRepository.save(buildingEntity);
-           }
-           if(rentAreaEntities != null){
-               rentAreaRepository.deleteAll(rentAreaEntities);
-           }
-       }
-       buildingRepository.deleteAll(buildings);
+        for (BuildingEntity buildingEntity : buildings) {
+            List<RentAreaEntity> rentAreaEntities = buildingEntity.getRentAreaEntities();
+            List<UserEntity> userEntities = buildingEntity.getUserEntities();
+            if (!userEntities.isEmpty()) {
+                buildingEntity.getUserEntities().clear();
+                buildingRepository.save(buildingEntity);
+            }
+            if (rentAreaEntities != null) {
+                rentAreaRepository.deleteAll(rentAreaEntities);
+            }
+        }
+        buildingRepository.deleteAll(buildings);
     }
 
     @Override
     @Transactional
-    public void doneBuildingToStaff(AssignmentBuildingDTO assignmentBuildingDTO){
+    public void doneBuildingToStaff(AssignmentBuildingDTO assignmentBuildingDTO) {
         Long buildingId = assignmentBuildingDTO.getBuildingId();
         List<Long> staffId = assignmentBuildingDTO.getStaffs();
         BuildingEntity buildingEntity = buildingRepository.findById(buildingId).orElseThrow(() -> new NotFoundException("Building not found with ID: " + buildingId));
@@ -121,6 +120,7 @@ public class BuildingService implements IBuildingService {
         buildingEntity.setUserEntities(staffEntities);
         buildingRepository.save(buildingEntity);
     }
+
     @Override
     public ResponseDTO listStaffs(Long buildingId) {
         BuildingEntity building = buildingRepository.findById(buildingId).get();
@@ -128,14 +128,13 @@ public class BuildingService implements IBuildingService {
         List<UserEntity> staffAssignment = building.getUserEntities();
         List<StaffResponseDTO> staffResponseDTOS = new ArrayList<>();
         ResponseDTO responseDTO = new ResponseDTO();
-        for (UserEntity item : staffs){
+        for (UserEntity item : staffs) {
             StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
             staffResponseDTO.setFullName(item.getFullName());
             staffResponseDTO.setStaffId(item.getId());
-            if(staffAssignment.contains(item)){
+            if (staffAssignment.contains(item)) {
                 staffResponseDTO.setChecked("checked");
-            }
-            else {
+            } else {
                 staffResponseDTO.setChecked("unchecked");
             }
             staffResponseDTOS.add(staffResponseDTO);

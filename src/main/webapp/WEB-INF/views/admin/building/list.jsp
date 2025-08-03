@@ -160,11 +160,13 @@
                                                     </div>
                                                     <div class="col-xs-2">
                                                         <div>
-                                                            <label class="name">Nhân viên</label>
-                                                            <form:select class="form-control" path="staffId">
-                                                                <form:option value="">Chọn Nhân viên</form:option>
-                                                                <form:options items="${listStaffs}"/>
-                                                            </form:select>
+                                                            <security:authorize access="hasRole('MANAGER')">
+                                                                <label class="name">Nhân viên</label>
+                                                                <form:select class="form-control" path="staffId">
+                                                                    <form:option value="">Chọn Nhân viên</form:option>
+                                                                    <form:options items="${listStaffs}"/>
+                                                                </form:select>
+                                                            </security:authorize>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -280,11 +282,12 @@
                                 <td>${item.rentPriceDescription}</td>
                                 <td>
                                     <div class="hidden-sm hidden-xs btn-group">
-                                        <button class="btn btn-xs btn-success" title="Giao Tòa Nhà"
-                                                onclick="assingmentBuilding(${item.id})">
-                                            <i class="ace-icon glyphicon glyphicon-list"></i>
-                                        </button>
-
+                                        <security:authorize access="hasRole('MANAGER')">
+                                            <button class="btn btn-xs btn-success" title="Giao Tòa Nhà"
+                                                    onclick="assingmentBuilding(${item.id})">
+                                                <i class="ace-icon glyphicon glyphicon-list"></i>
+                                            </button>
+                                        </security:authorize>
                                         <a class="btn btn-xs btn-info" title="Sửa toa nhà"
                                            href="/admin/building-edit-${item.id}">
                                             <i class="ace-icon fa fa-pencil bigger-120"></i>
@@ -353,7 +356,7 @@
         $.ajax({
             url: "${buildingAPI}/" + buildingId + '/staffs',
             type: 'GET',
-             //data: JSON.stringify(data),
+            //data: JSON.stringify(data),
             //contentType: 'application/json',
             dataType: 'json',
             success: function (response) {
