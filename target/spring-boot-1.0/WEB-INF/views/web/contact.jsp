@@ -197,8 +197,7 @@
             </div>
         </div>
         <div class="bottom-footer-2">
-            <div class="text-center desc-bottom-footer-2">@ Bản quyền thuộc về Happy Team |
-                Cung cấp bởi <a class="a-text group-name" href="#">HappyTeam</a></div>
+            <div class="text-center desc-bottom-footer-2"> </div>
         </div>
     </footer>
 </div>

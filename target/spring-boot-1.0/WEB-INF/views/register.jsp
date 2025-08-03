@@ -93,9 +93,6 @@
                             <p class="text-center text-muted mt-2 mb-0">Have already an account? <a href="#!"
                                                                                                     class="fw-bold text-body"><u
                                     style="color: white ;">Login here</u></a></p>
-
-                            </form>
-
                         </div>
                     </div>
                 </div>
