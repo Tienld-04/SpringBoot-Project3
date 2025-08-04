@@ -2,6 +2,7 @@ package com.javaweb.converter;
 
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.RentAreaEntity;
+import com.javaweb.entity.UserEntity;
 import com.javaweb.enums.TypeCode;
 import com.javaweb.model.dto.BuildingDTO;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,15 @@ public class BuildingConverter {
 
     public BuildingDTO converterToBuildingDTO(BuildingEntity buildingEntity) {
         BuildingDTO buildingDTO = modelMapper.map(buildingEntity, BuildingDTO.class);
+
+        // 8/4/2025
+        List<UserEntity> userEntities = buildingEntity.getUserEntities();
+        List<Long> idStaff = new ArrayList<>();
+        for (UserEntity userEntity : userEntities) {
+            idStaff.add(userEntity.getId());
+        }
+        buildingDTO.setStaffId(idStaff);
+        //
         String typeCode = buildingEntity.getTypeCode();
         List<String> typeCodes = Arrays.asList(typeCode.split(","));
         buildingDTO.setTypeCode(typeCodes);
@@ -35,22 +45,21 @@ public class BuildingConverter {
     }
 
     public BuildingEntity converterToBuildingEntity(BuildingDTO buildingDTO) {
+        BuildingEntity buildingEntity = modelMapper.map(buildingDTO, BuildingEntity.class);
+        List<String> typeCodes = buildingDTO.getTypeCode();
+        String typeCode = String.join(",", typeCodes);
+        buildingEntity.setTypeCode(typeCode);
+        List<RentAreaEntity> rentAreaEntities = Arrays.stream(buildingDTO.getRentArea().split(",")).map(
+                value -> {
+                    RentAreaEntity rentAreaEntity = new RentAreaEntity();
+                    rentAreaEntity.setValue(Long.parseLong(value));
+                    rentAreaEntity.setBuildingEntity(buildingEntity);
+                    return rentAreaEntity;
+                }).collect(Collectors.toList());
 
-            BuildingEntity buildingEntity = modelMapper.map(buildingDTO, BuildingEntity.class);
-            List<String> typeCodes = buildingDTO.getTypeCode();
-            String typeCode = String.join(",", typeCodes);
-            buildingEntity.setTypeCode(typeCode);
-            List<RentAreaEntity> rentAreaEntities = Arrays.stream(buildingDTO.getRentArea().split(",")).map(
-                    value -> {
-                        RentAreaEntity  rentAreaEntity = new RentAreaEntity();
-                        rentAreaEntity.setValue(Long.parseLong(value));
-                        rentAreaEntity.setBuildingEntity(buildingEntity);
-                        return rentAreaEntity;
-                    }).collect(Collectors.toList());
-
-            buildingEntity.setRentAreaEntities(rentAreaEntities);
-            return buildingEntity;
-      }
+        buildingEntity.setRentAreaEntities(rentAreaEntities);
+        return buildingEntity;
+    }
 //    public BuildingEntity converterToBuildingEntity(BuildingDTO buildingDTO) {
 //        BuildingEntity buildingEntity = modelMapper.map(buildingDTO, BuildingEntity.class);
 //

@@ -1,5 +1,6 @@
 package com.javaweb.service;
 
+import com.javaweb.entity.UserEntity;
 import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
@@ -15,4 +16,5 @@ public interface IBuildingService {
     List<BuildingSearchResponse> getBuildingSearch(BuildingSearchRequest buildingSearchRequest);
     BuildingDTO findBuildingById(Long id);
     void doneBuildingToStaff(AssignmentBuildingDTO assignmentBuildingDTO);
+    List<Long> getUsersByBuildingId(Long BuildingId);
 }

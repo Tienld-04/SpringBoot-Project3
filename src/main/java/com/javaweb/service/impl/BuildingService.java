@@ -17,6 +17,7 @@ import com.javaweb.repository.BuildingRepository;
 import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.repository.custom.BuildingRepositoryCustom;
+import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.IBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.model.NotFoundException;
@@ -67,16 +68,43 @@ public class BuildingService implements IBuildingService {
     }
 
     @Override
+    public List<Long> getUsersByBuildingId(Long BuildingId) {
+        BuildingEntity buildingEntity = buildingRepository.findById(BuildingId).get();
+        List<UserEntity> userEntityList = buildingEntity.getUserEntities();
+        List<Long> staffIdList = new ArrayList<>();
+        for (UserEntity userEntity : userEntityList) {
+            staffIdList.add(userEntity.getId());
+        }
+        return staffIdList;
+    }
+
+    @Override
     @Transactional
     public void addOrUpdateBuilding(BuildingDTO buildingDTO) {
         Long buildingId = buildingDTO.getId();
-        if(buildingId == null){
+        if (buildingId == null) {
             BuildingEntity buildingEntity = buildingConverter.converterToBuildingEntity(buildingDTO);
+            Long staffId = SecurityUtils.getPrincipal().getId();
+            UserEntity userEntity = userRepository.findById(staffId).get();
+            List<UserEntity> us = new ArrayList<>();
+            us.add(userEntity);
+            buildingEntity.setUserEntities(us);
             buildingRepository.save(buildingEntity);
-        }else {
+        } else {
             BuildingEntity updateBuildingEntity = buildingRepository.findById(buildingId).orElseThrow(() -> new NotFoundException("Building not found with ID: " + buildingId));
             updateBuildingEntity = buildingConverter.converterToBuildingEntity(buildingDTO);
+            List<Long> idStaff = buildingDTO.getStaffId();
+            List<UserEntity> us = new ArrayList<>();
+            for (Long id : idStaff) {
+                UserEntity userEntity = userRepository.findById(id).get();
+                if(userEntity != null) {
+                    us.add(userEntity);
+                }
+            }
+            updateBuildingEntity.setUserEntities(us);
             buildingRepository.save(updateBuildingEntity);
+
+
         }
 
 //        Long buildingId = buildingDTO.getId();
