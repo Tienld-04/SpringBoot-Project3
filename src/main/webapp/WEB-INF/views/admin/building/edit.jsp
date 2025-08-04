@@ -250,6 +250,11 @@
                                     <form:checkboxes path="typeCode" items="${typeCodes}"/>
                                 </div>
                             </div>
+
+                            <c:forEach var="id" items="${buildingEdit.staffId}">
+                                <input type="hidden" name="staffId" value="${id}"/>
+                            </c:forEach>
+
                             <div class="form-group">
                                 <label class="col-xs-3"></label>
                                 <div class="col-xs-9">
@@ -281,60 +286,34 @@
     <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
         <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
     </a>
-</div><!-- /.main-container -->
+</div>
 
-<%--<script>--%>
-<%--    $('#btlAddOrUpdateBuilding').click(function () {--%>
-<%--        var data = {};--%>
-<%--        var typeCode = [];--%>
-<%--        var formData = $('#listForm').serializeArray();--%>
-<%--        $.each(formData, function (i, v) {--%>
-<%--            if (v.name != 'typeCode') {--%>
-<%--                data["" + v.name + ""] = v.value;--%>
-<%--            } else {--%>
-<%--                typeCode.push(v.value);--%>
-<%--            }--%>
-<%--        });--%>
-<%--        data['typeCode'] = typeCode;--%>
-<%--        if (typeCode != '') {--%>
-<%--            addOrUpdateBuilding(data);--%>
-<%--        } else {--%>
-<%--            window.location.href = "<c:url value="/admin/building-edit?typeCode=require"/>";--%>
-<%--        }--%>
-<%--    });--%>
-<%--    function addOrUpdateBuilding(data) {--%>
-<%--        $.ajax({--%>
-<%--            url: "${buildingAPI}",--%>
-<%--            type: 'POST',--%>
-<%--            data: JSON.stringify(data), // chuyển đổi đối tượng thành chuỗi JSON--%>
-<%--            contentType: 'application/json',--%>
-<%--            dataType: 'json',--%>
-<%--            success: function (response) {--%>
-<%--                console.log("Building added successfully");--%>
-<%--            },--%>
-<%--            error: function (response) {--%>
-<%--                console.error("Error adding building:", response);--%>
-<%--            }--%>
-<%--        });--%>
-<%--    }--%>
-
-<%--    $('#btlCancel').click(function () {--%>
-<%--        window.location.href = "/admin/building-list";--%>
-
-<%--    });--%>
-<%--</script>--%>
 <script>
     $('#btlAddOrUpdateBuilding').click(function () {
         var data = {};
         var typeCode = [];
+        var staffId = [];
         var formData = $('#listForm').serializeArray();
+        // $.each(formData, function (i, v) {
+        //     if (v.name !== 'typeCode') {
+        //         data[v.name] = v.value;
+        //     } else if (v.name === 'staffId'){
+        //         staffId.push(v.value);
+        //     }
+        //     else {
+        //         typeCode.push(v.value);
+        //     }
+        // });
         $.each(formData, function (i, v) {
-            if (v.name !== 'typeCode') {
-                data[v.name] = v.value;
-            } else {
+            if (v.name === 'typeCode') {
                 typeCode.push(v.value);
+            } else if (v.name === 'staffId') {
+                staffId.push(v.value);
+            } else {
+                data[v.name] = v.value;
             }
         });
+
         data['typeCode'] = typeCode;
         if (typeCode.length === 0) {
             window.location.href = "<c:url value='/admin/building-edit?typeCode=require'/>";
@@ -342,9 +321,11 @@
         }
         var buildingId = $('#buildingId').val();
         if (buildingId) {
+            data['staffId'] = staffId;
             data.id = buildingId;
             updateBuilding(data);
         } else {
+            data['staffId'] = null;
             addBuilding(data);
         }
     });
@@ -358,35 +339,36 @@
             dataType: 'json',
             success: function (response) {
                 console.log("Building added successfully:", response);
+                alert("Đã thêm tòa nhà thành công!");
                 window.location.href = "/admin/building-list";
             },
             error: function (response) {
                 console.error("Error adding building:", response);
-                 window.location.href = "/admin/building-list";
+                window.location.href = "/admin/building-list";
             }
         });
     }
 
     function updateBuilding(data) {
-    var buildingId = $('#buildingId').val();
-    console.log("Sending PUT to URL:", "${buildingAPI}/" + buildingId);
-    console.log("PUT data:", JSON.stringify(data));
-    $.ajax({
-        url: "${buildingAPI}/" + buildingId,
-        type: 'PUT',
-        data: JSON.stringify(data),
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (response) {
-            console.log("Building updated successfully:", response);
-            window.location.href = "/admin/building-list";
-        },
-        error: function (response) {
-            console.error("Error updating building:", response);
-            window.location.href = "/admin/building-list";
-        }
-    });
-}
+        var buildingId = $('#buildingId').val();
+        console.log("Sending PUT to URL:", "${buildingAPI}/" + buildingId);
+        console.log("PUT data:", JSON.stringify(data));
+        $.ajax({
+            url: "${buildingAPI}/" + buildingId,
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (response) {
+                console.log("Building updated successfully:", response);
+                window.location.href = "/admin/building-list";
+            },
+            error: function (response) {
+                console.error("Error updating building:", response);
+                window.location.href = "/admin/building-list";
+            }
+        });
+    }
 
     $('#btlCancel').click(function () {
         window.location.href = "/admin/building-list";

@@ -1,5 +1,6 @@
 package com.javaweb.model.dto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +20,18 @@ public class BuildingDTO extends AbstractDTO{
     private String rentPriceDescription;
     private String managerName;
     private String managerPhone;
-    private Long staffId;
+   // private Long staffId;
     private List<String> typeCode;
+
+    private List<Long> staffId =  new ArrayList<>();
+
+    public List<Long> getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(List<Long> staffId) {
+        this.staffId = staffId;
+    }
 
     public String getName() {
         return name;
@@ -134,13 +145,13 @@ public class BuildingDTO extends AbstractDTO{
         this.managerPhone = managerPhone;
     }
 
-    public Long getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(Long staffId) {
-        this.staffId = staffId;
-    }
+//    public Long getStaffId() {
+//        return staffId;
+//    }
+//
+//    public void setStaffId(Long staffId) {
+//        this.staffId = staffId;
+//    }
 
     public List<String> getTypeCode() {
         return typeCode;

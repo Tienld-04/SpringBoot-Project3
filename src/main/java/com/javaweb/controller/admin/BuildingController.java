@@ -3,6 +3,7 @@ package com.javaweb.controller.admin;
 
 import com.javaweb.enums.TypeCode;
 import com.javaweb.enums.DistrictCode;
+import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
