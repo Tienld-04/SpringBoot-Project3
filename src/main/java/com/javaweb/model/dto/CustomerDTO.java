@@ -1,5 +1,7 @@
 package com.javaweb.model.dto;
 
+import java.util.List;
+
 public class CustomerDTO extends AbstractDTO {
     private String fullName;
     private String managementStaff;
@@ -9,6 +11,16 @@ public class CustomerDTO extends AbstractDTO {
     private String companyName;
     private Boolean isActive;
     private String status;
+
+    private List<Long> staffId;
+
+    public List<Long> getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(List<Long> staffId) {
+        this.staffId = staffId;
+    }
 
     public Boolean getActive() {
         return isActive;

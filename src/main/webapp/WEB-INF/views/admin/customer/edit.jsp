@@ -1,3 +1,4 @@
+<%@ taglib prefix="fprm" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/common/taglib.jsp" %>
 <html>
@@ -21,31 +22,23 @@
                     <a href="/admin/customer-list">Trang chủ</a>
                 </li>
                 <c:if test="${empty customerEdit.id}">
-                    <li class="active">Thêm khách hàng</li
+                    <li class="active">Thêm khách hàng</li>
                 </c:if>
                 <c:if test="${not empty customerEdit.id}">
-                    <li class="active">Chỉnh sửa thông tin khách hàng</li
+                    <li class="active">Chỉnh sửa thông tin khách hàng</li>
                 </c:if>
-            </ul><!-- /.breadcrumb -->
-
-
+            </ul>
         </div>
-
         <div class="page-content">
             <div class="ace-settings-container" id="ace-settings-container">
-
-            </div> <!--/.ace-settings-box -->
+            </div>
             <div class="page-header">
-                <%--                <h1>--%>
-                <%--                    Dashboard--%>
-                <%--                    <small>--%>
-                <%--                        <i class="ace-icon fa fa-angle-double-right"></i>--%>
-                <%--                        overview &amp; stats--%>
-                <%--                    </small>--%>
-                <%--                </h1>--%>
-            </div><!-- /.page-header -->
+            </div>
             <form:form modelAttribute="customerEdit" action="/admin/customer-edit" id="customerForm" method="post">
                 <div class="row" style="font-family:'Times New Roman', Times, serif ">
+                    <c:forEach var="id" items="${customerEdit.staffId}">
+                        <input type="hidden" name="staffId" value="${id}"/>
+                    </c:forEach>
                     <div class="col-xs-12">
                         <form class="form-horizontal" id="form-edit">
                             <div class="form-group row">
@@ -99,7 +92,6 @@
                                     </form:select>
                                 </div>
                             </div>
-
                             <div class="form-group row">
                                 <label for="" class="col-sm-3"></label>
                                 <div class="col-sm-9">
@@ -120,7 +112,7 @@
                                 </div>
                             </div>
                             <form:hidden path="id" id="customerId"/>
-<%--                            <form:hidden path="modifiedDate" id="modifiedDate"/>--%>
+                                <%--                            <form:hidden path="modifiedDate" id="modifiedDate"/>--%>
                             <form:hidden path="modifiedBy" id="modifiedBy"/>
                         </form>
                     </div>
@@ -181,7 +173,6 @@
     <div class="modal fade" id="transactionTypeModal" role="dialog"
          style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
         <div class="modal-dialog">
-
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
@@ -263,18 +254,25 @@
         var data = {};
         var formData = $('#customerForm').serializeArray();
         $.each(formData, function (i, it) {
-            data[it.name] = it.value;
+            if ($('#customerId').val() !== "" && it.name === 'staffId') {
+                if (!data['staffId']) {
+                    data['staffId'] = [];
+                }
+                data['staffId'].push(it.value);
+            } else if (it.name !== 'staffId') {
+                data[it.name] = it.value;
+            }
+
         });
-        //data['modifiedDate'] = $('#modifiedDate').val();
+        data['modifiedDate'] = $('#modifiedDate').val();
         data['modifiedBy'] = $('#modifiedBy').val().toString();
         if ($('#customerId').val() !== "") {
             updateCustomer(data, $('#customerId').val());
         } else {
+            data['staffId'] = null;
             addCustomer(data);
         }
     });
-
-
     $('#btnAddOrUpdateTransaction').click(function (e) {
         e.preventDefault();
         var data = {};
@@ -309,6 +307,10 @@
     }
 
     function updateCustomer(data, id) {
+        if (!data['staffId']) {
+            data['staffId'] = [];
+        }
+        console.log("Update customer data:", JSON.stringify(data)); // Debug dữ liệu
         $.ajax({
             type: "PUT",
             url: "/api/customer/" + id,

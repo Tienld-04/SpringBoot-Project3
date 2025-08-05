@@ -15,4 +15,5 @@ public interface ICustomerService {
     void deleteCustomerByIds(List<Long> ids);
     void addorUpdateCustomer(CustomerDTO customerDTO);
     CustomerDTO getCustomerById(Long id);
+    void fromContractAddCustomer(CustomerDTO customerDTO);
 }

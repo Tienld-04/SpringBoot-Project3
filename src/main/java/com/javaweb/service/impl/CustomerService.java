@@ -19,6 +19,7 @@ import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.CustomerRepository;
 import com.javaweb.repository.TransactionRepository;
 import com.javaweb.repository.UserRepository;
+import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.acls.model.NotFoundException;
@@ -72,25 +73,59 @@ public class CustomerService implements ICustomerService {
         customerRepository.save(customerEntity);
     }
 
-
     @Override
     @Transactional
-    public void addorUpdateCustomer(CustomerDTO customerDTO){
+    public void fromContractAddCustomer(CustomerDTO customerDTO){
         Long id = customerDTO.getId();
         CustomerEntity customerEntity = customerConverter.converterToCustomerEntity(customerDTO);
-        if(id != null){
-            customerEntity.setCreatedBy(customerDTO.getCreatedBy());
-            customerEntity.setCreatedDate(customerDTO.getCreatedDate());
-        }
         customerEntity.setActive(true);
         customerRepository.save(customerEntity);
+    }
+    @Override
+    @Transactional
+    public void addorUpdateCustomer(CustomerDTO customerDTO) {
+        Long customerId = customerDTO.getId();
+//        CustomerEntity customerEntity = customerConverter.converterToCustomerEntity(customerDTO);
+//        if(id != null){
+//            customerEntity.setCreatedBy(customerDTO.getCreatedBy());
+//            customerEntity.setCreatedDate(customerDTO.getCreatedDate());
+//        }
+//        customerEntity.setActive(true);
+//        customerRepository.save(customerEntity);
+        if (customerId == null) {
+            CustomerEntity customerEntity = customerConverter.converterToCustomerEntity(customerDTO);
+            Long staffId = SecurityUtils.getPrincipal().getId();
+            UserEntity userEntity = userRepository.findById(staffId).get();
+            List<UserEntity> us = new ArrayList<>();
+            us.add(userEntity);
+            customerEntity.setUserEntityList(us);
+            customerEntity.setActive(true);
+            customerRepository.save(customerEntity);
+        } else {
+            CustomerEntity updateCustomerEntity = customerConverter.converterToCustomerEntity(customerDTO);
+            List<Long> staffList = customerDTO.getStaffId();
+            List<UserEntity> us = new ArrayList<>();
+            for (Long staffId : staffList) {
+                UserEntity userEntity = userRepository.findById(staffId).get();
+                if (userEntity != null) {
+                    us.add(userEntity);
+                }
+            }
+            updateCustomerEntity.setUserEntityList(us);
+            updateCustomerEntity.setCreatedBy(customerDTO.getCreatedBy());
+            updateCustomerEntity.setCreatedDate(customerDTO.getCreatedDate());
+            updateCustomerEntity.setModifiedBy(customerDTO.getModifiedBy());
+            updateCustomerEntity.setModifiedDate(customerDTO.getModifiedDate());
+            updateCustomerEntity.setActive(true);
+            customerRepository.save(updateCustomerEntity);
+        }
     }
 
     @Override
     public CustomerDTO getCustomerById(Long id) {
         Optional<CustomerEntity> op = customerRepository.findById(id);
         CustomerEntity customerEntity = new CustomerEntity();
-        if(op.isPresent()){
+        if (op.isPresent()) {
             customerEntity = op.get();
         }
         return customerConverter.converterToCustomerDTO(customerEntity);
@@ -102,7 +137,7 @@ public class CustomerService implements ICustomerService {
         List<CustomerEntity> customers = customerRepository.findAllById(ids);
         for (CustomerEntity customerEntity : customers) {
             List<TransactionEntity> transactionEntities = customerEntity.getTransactionEntities();
-           // List<UserEntity> userEntities = customerEntity.getUserEntityList();
+            // List<UserEntity> userEntities = customerEntity.getUserEntityList();
             if (!transactionEntities.isEmpty()) {
                 customerEntity.getTransactionEntities().clear();
                 transactionRepository.deleteAll(transactionEntities);

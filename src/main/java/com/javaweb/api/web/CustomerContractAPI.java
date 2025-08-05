@@ -16,7 +16,7 @@ public class CustomerContractAPI {
     @PostMapping("/contract/customer")
     public String customerContract(@ModelAttribute("modalCustomerContract") CustomerDTO customerDTO, RedirectAttributes redirectAttributes) {
         customerDTO.setStatus("CHUA_XU_LY");
-        customerService.addorUpdateCustomer(customerDTO);
+        customerService.fromContractAddCustomer(customerDTO);
         redirectAttributes.addFlashAttribute("message", "Gửi liên hệ thành công!");
         return "redirect:/lien-he";
     }
